@@ -9,8 +9,7 @@ import { buildSchema } from 'type-graphql'
 process.env.TZ = 'utc'
 // Init Server
 ;(async () => {
-  const log = true
-  const server = fastify({ logger: log })
+  const server = fastify({ logger: true })
   const port = process.env.PORT ? Number(process.env.PORT) : 3010
 
   try {
@@ -18,7 +17,7 @@ process.env.TZ = 'utc'
     useContainer(Container)
     // Database connection
     const dbOptions = await getConnectionOptions(process.env.NODE_ENV)
-    const dbCon = await createConnection({ ...dbOptions, name: 'default', logging: log })
+    const dbCon = await createConnection({ ...dbOptions, name: 'default' })
     await dbCon.runMigrations()
 
     // Apollo Graphql Server
@@ -26,7 +25,7 @@ process.env.TZ = 'utc'
       schema: await buildSchema({
         resolvers: [__dirname + '/modules/**/*.resolver.{ts,js}'],
         container: Container,
-        emitSchemaFile: true,
+        emitSchemaFile: false,
       }),
       context: ({ req, res }) => ({ req, res }),
     })

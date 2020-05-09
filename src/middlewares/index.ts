@@ -1,3 +1,3 @@
-const middlewares = {}
+import { AdminMiddleware } from './isAdmin'
 
-export default middlewares
+export const isAdmin = AdminMiddleware

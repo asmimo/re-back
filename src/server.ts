@@ -5,6 +5,8 @@ import { useContainer, getConnectionOptions, createConnection } from 'typeorm'
 import { Container } from 'typedi'
 import { ApolloServer } from 'apollo-server-fastify'
 import { buildSchema } from 'type-graphql'
+
+import AuthController from './modules/user/auth.controller'
 //
 process.env.TZ = 'utc'
 // Init Server
@@ -33,6 +35,7 @@ process.env.TZ = 'utc'
     // Registering plugins on server
     server.register(apolloServer.createHandler())
     server.register(fastifyForm)
+    server.register(AuthController, { prefix: '/api' })
 
     await server.listen(port, '0.0.0.0')
   } catch (err) {

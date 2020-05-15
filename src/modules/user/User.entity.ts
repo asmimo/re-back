@@ -1,6 +1,17 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 import bcrypt from 'bcryptjs'
+
+import { Organization } from '../organization/organization.entity'
 
 @ObjectType()
 @Entity()
@@ -47,6 +58,15 @@ export class User extends BaseEntity {
   @Field()
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updated_at: Date
+
+  @Field()
+  @Column()
+  organization_id: string
+
+  @Field(() => Organization, { nullable: true })
+  @ManyToOne(() => Organization, (organization) => organization.users)
+  @JoinColumn({ name: 'organization_id' })
+  organization?: Organization
 
   async hashPassword(): Promise<void> {
     const salt = await bcrypt.genSalt()

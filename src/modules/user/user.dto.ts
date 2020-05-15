@@ -30,6 +30,10 @@ export class CreateUserDTO {
 
   @Field({ defaultValue: false })
   admin: boolean
+
+  @Field(() => ID)
+  @IsUUID()
+  organization_id: string
 }
 
 @InputType()
@@ -51,6 +55,10 @@ export class UserFilterDTO extends DateFilterDTO {
 
   @Field({ nullable: true })
   admin?: boolean
+
+  @Field({ nullable: true })
+  @IsUUID()
+  organization_id?: string
 }
 
 @ArgsType()

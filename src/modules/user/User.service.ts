@@ -1,4 +1,4 @@
-import { Service } from 'typedi'
+import { Service, Inject } from 'typedi'
 import { InjectRepository } from 'typeorm-typedi-extensions'
 import { Repository } from 'typeorm'
 import { GraphQLResolveInfo } from 'graphql'
@@ -7,25 +7,30 @@ import parseResolve from '../../utils/parseResolve'
 
 import { User } from './User.entity'
 import { CreateUserDTO, UserFilterDTO, UserPaginationDTO, UpdateUserDTO, UpdateUserPasswordDTO } from './user.dto'
+import { OrganizationService } from '../organization/organization.service'
 import errorHandler from '../../utils/errorHandler'
 
 @Service('UserService')
 export class UserService {
   @InjectRepository(User)
   protected readonly userRepo: Repository<User>
+  @Inject('OrganizationService')
+  protected readonly organizationService: OrganizationService
 
   async createUser(dto: CreateUserDTO): Promise<User> {
-    const { username, email, password, confirm, admin } = dto
+    const { username, email, password, confirm, admin, organization_id } = dto
     const user = new User()
 
     if (password !== confirm) {
       throw errorHandler({ message: 'DONOT_MATCH' })
     }
 
+    const organization = await this.organizationService.getOrganization(organization_id)
     user.username = username
     user.email = email
     user.password = password
     user.admin = admin
+    user.organization = organization
 
     try {
       await user.hashPassword()
@@ -41,7 +46,7 @@ export class UserService {
     const query = this.userRepo.createQueryBuilder('user').where(`user.id = :id`, { id })
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['organization'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`user.${relation}`, relation)
@@ -93,7 +98,7 @@ export class UserService {
     query.take(take).skip(skip).orderBy(`user.${by}`, sort)
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['organization'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`user.${relation}`, relation)

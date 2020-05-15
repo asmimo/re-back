@@ -6,10 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Subscription } from '../subscription/subscription.entity'
+import { User } from '../user/User.entity'
 
 @ObjectType()
 @Entity()
@@ -61,4 +63,8 @@ export class Organization extends BaseEntity {
   @Field(() => Subscription, { nullable: true })
   @OneToOne(() => Subscription, (subscription) => subscription.organization)
   subscription?: Subscription
+
+  @Field(() => [User], { nullable: true })
+  @OneToMany(() => User, (user) => user.organization)
+  users?: User[]
 }

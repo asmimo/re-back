@@ -1,8 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { Http2ServerResponse } from 'http2'
 
+import { User } from '../modules/user/User.entity'
+
 declare module 'fastify' {
-  interface FastifyRequest {}
+  interface FastifyRequest {
+    user: User
+  }
 }
 
 export interface BaseContext {

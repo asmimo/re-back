@@ -1,5 +1,15 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+} from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
+
+import { Subscription } from '../subscription/subscription.entity'
 
 @ObjectType()
 @Entity()
@@ -47,4 +57,8 @@ export class Organization extends BaseEntity {
   @Field()
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updated_at: Date
+
+  @Field(() => Subscription, { nullable: true })
+  @OneToOne(() => Subscription, (subscription) => subscription.organization)
+  subscription?: Subscription
 }

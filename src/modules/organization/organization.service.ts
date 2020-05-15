@@ -45,7 +45,7 @@ export class OrganizationService {
     const query = this.organizationRepo.createQueryBuilder('organization').where(`organization.id = :id`, { id })
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['subscription'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`organization.${relation}`, relation)
@@ -106,7 +106,7 @@ export class OrganizationService {
     query.take(take).skip(skip).orderBy(`organization.${by}`, sort)
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['subscription'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`organization.${relation}`, relation)

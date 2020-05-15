@@ -1,4 +1,4 @@
-import { Service } from 'typedi'
+import { Service, Inject } from 'typedi'
 import { Repository } from 'typeorm'
 import { InjectRepository } from 'typeorm-typedi-extensions'
 import { format, addMonths, parseISO } from 'date-fns'
@@ -11,6 +11,7 @@ import {
   SubscriptionFilterDTO,
   SubscriptionPaginationDTO,
 } from './subscription.dto'
+import { OrganizationService } from '../organization/organization.service'
 import parseResolve from '../../utils/parseResolve'
 import errorHandler from '../../utils/errorHandler'
 
@@ -18,14 +19,18 @@ import errorHandler from '../../utils/errorHandler'
 export class SubscriptionService {
   @InjectRepository(Subscription)
   protected readonly subscriptionRepo: Repository<Subscription>
+  @Inject('OrganizationService')
+  protected readonly organizationService: OrganizationService
 
   async createSubscription(dto: CreateSubscriptionDTO): Promise<Subscription> {
-    const { type, web, month } = dto
+    const { type, web, month, organization_id } = dto
     const subscription = new Subscription()
 
+    const organization = await this.organizationService.getOrganization(organization_id)
     subscription.type = type
     subscription.web = web
     subscription.expires_on = format(addMonths(new Date(), month), `yyyy-MM-dd`)
+    subscription.organization = organization
 
     try {
       await subscription.save()
@@ -37,10 +42,12 @@ export class SubscriptionService {
   }
 
   async getSubscription(id: string, info?: GraphQLResolveInfo): Promise<Subscription> {
-    const query = this.subscriptionRepo.createQueryBuilder('subscription').where(`subscription.id = :id`, { id })
+    const query = this.subscriptionRepo
+      .createQueryBuilder('subscription')
+      .where(`subscription.id = :id OR subscription.organization_id = :id`, { id })
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['organization'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`subscription.${relation}`, relation)
@@ -89,7 +96,7 @@ export class SubscriptionService {
     query.take(take).skip(skip).orderBy(`subscription.${by}`, sort)
 
     if (info) {
-      const relations = parseResolve(info, [])
+      const relations = parseResolve(info, ['organization'])
       relations &&
         relations.map((relation) => {
           query.leftJoinAndSelect(`subscription.${relation}`, relation)

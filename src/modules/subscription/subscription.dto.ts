@@ -15,6 +15,10 @@ export class CreateSubscriptionDTO {
   @Min(0)
   @Max(12)
   month: number
+
+  @Field(() => ID)
+  @IsUUID()
+  organization_id: string
 }
 
 @InputType()

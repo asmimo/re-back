@@ -3,9 +3,10 @@ import { sign, verify } from 'jsonwebtoken'
 
 import { User } from './user.entity'
 import config from '../../config'
+import sendEmailVerification from '../../utils/mail_templates/sendEmailVerification'
 
 const authController = async (server: FastifyInstance) => {
-  server.get('/email/verification', async (request, reply) => {
+  server.post('/email/verification', async (request, reply) => {
     const { token } = request.query
 
     try {
@@ -16,6 +17,9 @@ const authController = async (server: FastifyInstance) => {
       if (!user) {
         return reply.status(400).send({ type: 'error', token: 'NOT_FOUND' })
       }
+      if (user.confirmed) {
+        return reply.status(400).send({ type: 'error', token: 'ALREADY_VERIFIED' })
+      }
 
       user.confirmed = true
       await user.save()
@@ -25,7 +29,22 @@ const authController = async (server: FastifyInstance) => {
       return reply.status(400).send({ type: 'error', token: 'INVALID_TOKEN' })
     }
   })
-  // server.post('/email/verification-resend', async () => {})
+
+  server.post('/email/verification-resend', async (request, reply) => {
+    const { id } = request.body
+
+    const user = await User.createQueryBuilder('user').where(`user.username = :id OR user.email = :id`, { id }).getOne()
+
+    if (!user) {
+      return reply.status(400).send({ type: 'error', token: 'NOT_FOUND' })
+    }
+    if (user.confirmed) {
+      return reply.status(400).send({ type: 'error', token: 'ALREADY_VERIFIED' })
+    }
+
+    sendEmailVerification(user)
+    return reply.status(200).send({ type: 'success', token: 'ACTION_SUCCESSFULL' })
+  })
 
   server.post('/login', async (request, reply) => {
     const { id, password } = request.body

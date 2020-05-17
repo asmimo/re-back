@@ -23,6 +23,7 @@ const config = {
   admin,
   user,
   nodemailer,
+  appUrl: process.env.APP_URL,
 }
 
 export default config

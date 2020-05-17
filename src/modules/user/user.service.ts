@@ -8,6 +8,7 @@ import parseResolve from '../../utils/parseResolve'
 import { User } from './user.entity'
 import { CreateUserDTO, UserFilterDTO, UserPaginationDTO, UpdateUserDTO, UpdateUserPasswordDTO } from './user.dto'
 import { OrganizationService } from '../organization/organization.service'
+import sendEmailVerification from '../../utils/mail_templates/sendEmailVerification'
 import errorHandler from '../../utils/errorHandler'
 
 @Service('UserService')
@@ -35,6 +36,7 @@ export class UserService {
     try {
       await user.hashPassword()
       await user.save()
+      sendEmailVerification(user)
 
       return user
     } catch (error) {

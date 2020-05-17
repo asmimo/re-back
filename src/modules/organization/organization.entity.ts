@@ -11,7 +11,7 @@ import {
 import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Subscription } from '../subscription/subscription.entity'
-import { User } from '../user/User.entity'
+import { User } from '../user/user.entity'
 
 @ObjectType()
 @Entity()

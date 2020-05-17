@@ -2,8 +2,8 @@ import { Resolver, Mutation, Query, Info, Args, Arg } from 'type-graphql'
 import { Inject } from 'typedi'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { User } from './User.entity'
-import { UserService } from './User.service'
+import { User } from './user.entity'
+import { UserService } from './user.service'
 import { CreateUserDTO, UserFilterDTO, UserPaginationDTO, UpdateUserDTO, UpdateUserPasswordDTO } from './user.dto'
 import { IdDto } from '../../utils/global.dto'
 

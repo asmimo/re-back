@@ -3,7 +3,7 @@ import { AuthenticationError } from 'apollo-server-fastify'
 import { verify } from 'jsonwebtoken'
 
 import { BaseContext } from '../utils/context'
-import { User } from '../modules/user/User.entity'
+import { User } from '../modules/user/user.entity'
 import config from '../config'
 
 export const UserMiddleware: MiddlewareFn<BaseContext> = async (

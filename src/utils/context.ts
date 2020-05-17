@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { Http2ServerResponse } from 'http2'
 
-import { User } from '../modules/user/User.entity'
+import { User } from '../modules/user/user.entity'
 
 declare module 'fastify' {
   interface FastifyRequest {

@@ -5,7 +5,7 @@ import { GraphQLResolveInfo } from 'graphql'
 import { format } from 'date-fns'
 import parseResolve from '../../utils/parseResolve'
 
-import { User } from './User.entity'
+import { User } from './user.entity'
 import { CreateUserDTO, UserFilterDTO, UserPaginationDTO, UpdateUserDTO, UpdateUserPasswordDTO } from './user.dto'
 import { OrganizationService } from '../organization/organization.service'
 import errorHandler from '../../utils/errorHandler'

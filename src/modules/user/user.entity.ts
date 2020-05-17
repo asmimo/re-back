@@ -40,7 +40,7 @@ export class User extends BaseEntity {
   two_step_code?: string
 
   @Field()
-  @Column({ default: false })
+  @Column({ default: true })
   active: boolean
 
   @Field()

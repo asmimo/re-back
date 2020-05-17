@@ -4,6 +4,7 @@ import { sign, verify } from 'jsonwebtoken'
 import { User } from './user.entity'
 import config from '../../config'
 import sendEmailVerification from '../../utils/mail_templates/sendEmailVerification'
+import sendTwoStepCode from '../../utils/mail_templates/sendTwoStepCode'
 
 const authController = async (server: FastifyInstance) => {
   server.post('/email/verification', async (request, reply) => {
@@ -11,7 +12,6 @@ const authController = async (server: FastifyInstance) => {
 
     try {
       const { id }: any = await verify(token, config.user.registerJWT!)
-      console.log(id)
       const user = await User.createQueryBuilder('user').where(`user.id = :id`, { id }).getOne()
 
       if (!user) {
@@ -72,6 +72,7 @@ const authController = async (server: FastifyInstance) => {
         user.two_step_code = `${Math.floor(100000 + Math.random() * 900000)}`
         await user.save()
 
+        sendTwoStepCode(user)
         payload = { type: 'token', id: user.id }
         token = sign(payload, config.user.twoStepJWT!)
       } else {
@@ -83,7 +84,29 @@ const authController = async (server: FastifyInstance) => {
     return reply.status(200).send({ type: 'success', token })
   })
 
-  // server.post('/login/two-step', async () => {})
+  server.post('/login/two-step', async (request, reply) => {
+    const { twoStepToken, code } = request.body
+
+    try {
+      const { id }: any = await verify(twoStepToken, config.user.twoStepJWT!)
+      const user = await User.createQueryBuilder('user').where(`user.id = :id`, { id }).getOne()
+
+      if (!user) {
+        return reply.status(400).send({ type: 'error', token: 'INCORRECT_CREDENTIALS' })
+      }
+      if (user.two_step_code !== code) {
+        return reply.status(400).send({ type: 'error', token: 'INVALID_CODE' })
+      }
+
+      const payload = { type: 'user', id: user.id, username: user.username }
+      const token = sign(payload, config.user.loginJWT!)
+
+      return reply.status(200).send({ type: 'success', token })
+    } catch (error) {
+      return reply.status(400).send({ type: 'error', token: 'INVALID_TOKEN' })
+    }
+  })
+
   // server.post('/password/forgot', async () => {})
 }
 

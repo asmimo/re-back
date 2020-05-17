@@ -119,10 +119,10 @@ export class UserService {
     }
 
     user.username = username
-    user.email = email
     user.two_step = two_step
     user.active = active
     if (email) {
+      user.email = email
       user.confirmed = false
     }
 

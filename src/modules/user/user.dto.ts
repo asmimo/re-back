@@ -79,9 +79,9 @@ export class UpdateUserDTO {
   @Matches(/^\S*$/, { message: 'Username must not include spaces' })
   username: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsEmail()
-  email: string
+  email?: string
 
   @Field()
   two_step: boolean

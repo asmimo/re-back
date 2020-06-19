@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^8.3.9",
-    "@types/lodash": "^4.14.150",
+    "@types/lodash": "^4.14.155",
     "@types/node": "^13.13.4",
     "@types/nodemailer": "^6.4.0",
     "@types/pino": "^6.0.0",

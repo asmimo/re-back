@@ -15,18 +15,18 @@ const authController = async (server: FastifyInstance) => {
       const user = await User.createQueryBuilder('user').where(`user.id = :id`, { id }).getOne()
 
       if (!user) {
-        return reply.status(400).send({ type: 'error', token: 'NOT_FOUND' })
+        return reply.status(400).send({ token: 'NOT_FOUND' })
       }
       if (user.confirmed) {
-        return reply.status(400).send({ type: 'error', token: 'ALREADY_VERIFIED' })
+        return reply.status(400).send({ token: 'ALREADY_VERIFIED' })
       }
 
       user.confirmed = true
       await user.save()
 
-      return reply.status(200).send({ type: 'success', token: 'ACTION_SUCCESSFULL' })
+      return reply.status(200).send({ token: 'ACTION_SUCCESSFUL' })
     } catch (error) {
-      return reply.status(400).send({ type: 'error', token: 'INVALID_TOKEN' })
+      return reply.status(400).send({ token: 'INVALID_TOKEN' })
     }
   })
 
@@ -36,50 +36,52 @@ const authController = async (server: FastifyInstance) => {
     const user = await User.createQueryBuilder('user').where(`user.username = :id OR user.email = :id`, { id }).getOne()
 
     if (!user) {
-      return reply.status(400).send({ type: 'error', token: 'NOT_FOUND' })
+      return reply.status(400).send({ token: 'NOT_FOUND' })
     }
     if (user.confirmed) {
-      return reply.status(400).send({ type: 'error', token: 'ALREADY_VERIFIED' })
+      return reply.status(400).send({ token: 'ALREADY_VERIFIED' })
     }
 
     sendEmailVerification(user)
-    return reply.status(200).send({ type: 'success', token: 'ACTION_SUCCESSFULL' })
+    return reply.status(200).send({ token: 'ACTION_SUCCESSFUL' })
   })
 
   server.post('/login', async (request, reply) => {
     const { id, password } = request.body
-    let payload: Object, token: string
 
     if (id === config.admin.username && password === config.admin.password) {
-      payload = { type: 'admin', username: config.admin.username }
-      token = sign(payload, config.admin.loginJWT!)
-    } else {
-      const user = await User.createQueryBuilder('user')
-        .where(`user.username = :id OR user.email = :id`, { id })
-        .getOne()
+      const payload = { role: 'admin', id: 1, username: config.admin.username }
+      const token = sign(payload, config.admin.loginJWT!)
 
-      if (!user || (user && !(await user.comparePassword(password)))) {
-        return reply.status(400).send({ type: 'error', token: 'INCORRECT_CREDENTIALS' })
-      }
-      if (!user.confirmed) {
-        return reply.status(400).send({ type: 'error', token: 'NOT_CONFIRMED' })
-      }
-      if (!user.active) {
-        return reply.status(400).send({ type: 'error', token: 'DEACTIVATED' })
-      }
-
-      if (user.two_step) {
-        user.two_step_code = `${Math.floor(100000 + Math.random() * 900000)}`
-        await user.save()
-
-        sendTwoStepCode(user)
-        payload = { type: 'token', id: user.id }
-        token = sign(payload, config.user.twoStepJWT!)
-      } else {
-        payload = { type: 'user', id: user.id, username: user.username }
-        token = sign(payload, config.user.loginJWT!)
-      }
+      return reply.status(200).send({ type: 'success', token })
     }
+
+    const user = await User.createQueryBuilder('user').where(`user.username = :id OR user.email = :id`, { id }).getOne()
+
+    if (!user || (user && !(await user.comparePassword(password)))) {
+      return reply.status(400).send({ token: 'INCORRECT_CREDENTIALS' })
+    }
+    if (!user.confirmed) {
+      return reply.status(400).send({ token: 'NOT_CONFIRMED' })
+    }
+    if (!user.active) {
+      return reply.status(400).send({ token: 'DEACTIVATED' })
+    }
+
+    if (user.two_step) {
+      user.two_step_code = `${Math.floor(100000 + Math.random() * 900000)}`
+      await user.save()
+
+      sendTwoStepCode(user)
+
+      const payload = { id: user.id }
+      const token = sign(payload, config.user.twoStepJWT!)
+
+      return reply.status(200).send({ type: 'twoStep', token })
+    }
+
+    const payload = { role: 'user', id: user.id, username: user.username }
+    const token = sign(payload, config.user.loginJWT!)
 
     return reply.status(200).send({ type: 'success', token })
   })
@@ -92,18 +94,18 @@ const authController = async (server: FastifyInstance) => {
       const user = await User.createQueryBuilder('user').where(`user.id = :id`, { id }).getOne()
 
       if (!user) {
-        return reply.status(400).send({ type: 'error', token: 'INCORRECT_CREDENTIALS' })
+        return reply.status(400).send({ token: 'INCORRECT_CREDENTIALS' })
       }
       if (user.two_step_code !== code) {
-        return reply.status(400).send({ type: 'error', token: 'INVALID_CODE' })
+        return reply.status(400).send({ token: 'INVALID_CODE' })
       }
 
-      const payload = { type: 'user', id: user.id, username: user.username }
+      const payload = { role: 'user', id: user.id, username: user.username }
       const token = sign(payload, config.user.loginJWT!)
 
       return reply.status(200).send({ type: 'success', token })
     } catch (error) {
-      return reply.status(400).send({ type: 'error', token: 'INVALID_TOKEN' })
+      return reply.status(400).send({ token: 'INVALID_TOKEN' })
     }
   })
 

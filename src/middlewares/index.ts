@@ -1,3 +1,3 @@
-import { AdminMiddleware } from './isAdmin'
+import { AdminMiddleware } from "./isAdmin";
 
-export const isAdmin = AdminMiddleware
+export const isAdmin = AdminMiddleware;

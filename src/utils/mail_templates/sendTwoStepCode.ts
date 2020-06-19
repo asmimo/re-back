@@ -1,5 +1,5 @@
-import { User } from '../../modules/user/user.entity'
-import sendMail from '../sendMail'
+import { User } from "../../modules/user/user.entity";
+import sendMail from "../sendMail";
 
 const sendTwoStepCode = (user: User) => {
   const options = {
@@ -16,9 +16,9 @@ const sendTwoStepCode = (user: User) => {
     By:
     <br>
     Reback Team`,
-  }
+  };
 
-  sendMail(options)
-}
+  sendMail(options);
+};
 
-export default sendTwoStepCode
+export default sendTwoStepCode;

@@ -1,15 +1,15 @@
-import { FastifyRequest, FastifyReply } from 'fastify'
-import { Http2ServerResponse } from 'http2'
+import { FastifyRequest, FastifyReply } from "fastify";
+import { Http2ServerResponse } from "http2";
 
-import { User } from '../modules/user/user.entity'
+import { User } from "../modules/user/user.entity";
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyRequest {
-    user: User
+    user: User;
   }
 }
 
 export interface BaseContext {
-  req: FastifyRequest
-  res: FastifyReply<Http2ServerResponse>
+  req: FastifyRequest;
+  res: FastifyReply<Http2ServerResponse>;
 }

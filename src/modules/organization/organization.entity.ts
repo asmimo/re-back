@@ -7,64 +7,64 @@ import {
   UpdateDateColumn,
   OneToOne,
   OneToMany,
-} from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+} from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
 
-import { Subscription } from '../subscription/subscription.entity'
-import { User } from '../user/user.entity'
+import { Subscription } from "../subscription/subscription.entity";
+import { User } from "../user/user.entity";
 
 @ObjectType()
 @Entity()
 export class Organization extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Field()
   @Column({ unique: true })
-  name: string
+  name: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  email?: string
+  email?: string;
 
   @Field()
   @Column()
-  contact: string
+  contact: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  contact1?: string
+  contact1?: string;
 
   @Field()
   @Column()
-  country: string
+  country: string;
 
   @Field()
   @Column()
-  address: string
+  address: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  address1?: string
+  address1?: string;
 
   @Field()
   @Column({ default: true })
-  active: boolean
+  active: boolean;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at: Date
+  @CreateDateColumn({ type: "timestamp with time zone" })
+  created_at: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at: Date
+  @UpdateDateColumn({ type: "timestamp with time zone" })
+  updated_at: Date;
 
   @Field(() => Subscription, { nullable: true })
   @OneToOne(() => Subscription, (subscription) => subscription.organization)
-  subscription?: Subscription
+  subscription?: Subscription;
 
   @Field(() => [User], { nullable: true })
   @OneToMany(() => User, (user) => user.organization)
-  users?: User[]
+  users?: User[];
 }

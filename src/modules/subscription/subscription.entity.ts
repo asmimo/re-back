@@ -7,44 +7,44 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
-} from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+} from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
 
-import { Organization } from '../organization/organization.entity'
+import { Organization } from "../organization/organization.entity";
 
 @ObjectType()
 @Entity()
 export class Subscription extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Field()
   @Column()
-  type: 'medium' | 'large'
+  type: "medium" | "large";
 
   @Field()
   @Column()
-  web: boolean
+  web: boolean;
 
   @Field(() => String)
-  @Column('date')
-  expires_on: string
+  @Column("date")
+  expires_on: string;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at: Date
+  @CreateDateColumn({ type: "timestamp with time zone" })
+  created_at: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at: Date
+  @UpdateDateColumn({ type: "timestamp with time zone" })
+  updated_at: Date;
 
   @Field()
   @Column()
-  organization_id: string
+  organization_id: string;
 
   @Field(() => Organization)
   @OneToOne(() => Organization, (organization) => organization.subscription)
-  @JoinColumn({ name: 'organization_id' })
-  organization: Organization
+  @JoinColumn({ name: "organization_id" })
+  organization: Organization;
 }

@@ -38,7 +38,7 @@
     "@types/lodash": "^4.14.161",
     "@types/node": "^14.11.1",
     "@types/nodemailer": "^6.4.0",
-    "@types/pino": "^6.3.0",
+    "@types/pino": "^6.3.1",
     "ts-node": "8.10.2",
     "ts-node-dev": "^1.0.0-pre.62",
     "typescript": "3.9.6"

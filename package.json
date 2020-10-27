@@ -25,7 +25,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "nodemailer": "^6.4.14",
-    "pg": "^8.4.1",
+    "pg": "^8.4.2",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.3",
     "typedi": "^0.8.0",

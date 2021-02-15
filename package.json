@@ -36,7 +36,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.27",
+    "@types/node": "^14.14.28",
     "@types/nodemailer": "^6.4.0",
     "@types/pino": "^6.3.5",
     "ts-node": "8.10.2",

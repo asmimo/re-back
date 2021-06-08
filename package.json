@@ -14,7 +14,7 @@
   "dependencies": {
     "apollo-server-fastify": "^2.24.0",
     "bcryptjs": "^2.4.3",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.13.1",
     "date-fns": "^2.21.1",
     "dotenv": "^8.2.0",
     "fastify": "^2.15.1",
